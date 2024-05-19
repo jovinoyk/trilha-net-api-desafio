@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TrilhaApiDesafio.Context;
 using TrilhaApiDesafio.Models;
+using TrilhaApiDesafio.Controllers;
 
 namespace TrilhaApiDesafio.Controllers
 {
@@ -30,8 +31,12 @@ namespace TrilhaApiDesafio.Controllers
         [HttpGet("ObterTodos")]
         public IActionResult ObterTodos()
         {
-            // TODO: Buscar todas as tarefas no banco utilizando o EF
-            return Ok();
+            //Buscar todas as tarefas no banco utilizando o EF
+            // List<Tarefa> tarefas = new List<Tarefa>();            
+            // tarefas = _context.Tarefas.ToList();
+
+            List<Tarefa> tarefas = _context.Tarefas.ToList();          
+            return Ok(tarefas);
         }
 
         [HttpGet("ObterPorTitulo")]
@@ -39,13 +44,16 @@ namespace TrilhaApiDesafio.Controllers
         {
             // TODO: Buscar  as tarefas no banco utilizando o EF, que contenha o titulo recebido por parâmetro
             // Dica: Usar como exemplo o endpoint ObterPorData
-            return Ok();
+            var tarefa = _context.Tarefas.Where(x => x.Titulo.Contains(titulo));
+            // var tarefa = _context.Tarefas.Where(x => x.Titulo.ToUpper().Contains(titulo.ToUpper())).ToList();
+            return Ok(tarefa);
         }
 
         [HttpGet("ObterPorData")]
         public IActionResult ObterPorData(DateTime data)
         {
             var tarefa = _context.Tarefas.Where(x => x.Data.Date == data.Date);
+            
             return Ok(tarefa);
         }
 
