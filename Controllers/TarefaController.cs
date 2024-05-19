@@ -3,6 +3,9 @@ using TrilhaApiDesafio.Context;
 using TrilhaApiDesafio.Models;
 using TrilhaApiDesafio.Controllers;
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
+
 namespace TrilhaApiDesafio.Controllers
 {
     [ApiController]
@@ -89,8 +92,19 @@ namespace TrilhaApiDesafio.Controllers
             if (tarefa.Data == DateTime.MinValue)
                 return BadRequest(new { Erro = "A data da tarefa não pode ser vazia" });
 
-            // TODO: Atualizar as informações da variável tarefaBanco com a tarefa recebida via parâmetro
-            // TODO: Atualizar a variável tarefaBanco no EF e salvar as mudanças (save changes)
+            // Atualizar as informações da variável tarefaBanco com a tarefa recebida via parâmetro
+            if (tarefa.Titulo != "string")            
+                tarefaBanco.Titulo = tarefa.Titulo;
+            if (tarefa.Descricao != "string") 
+                tarefaBanco.Descricao = tarefa.Descricao;
+            tarefaBanco.Data = tarefa.Data;
+            tarefaBanco.Status = tarefa.Status;
+
+            // Atualizar a variável tarefaBanco no EF e salvar as mudanças (save changes)
+            _context.Tarefas.Update(tarefaBanco);
+            _context.SaveChanges();
+
+
             return Ok();
         }
 
@@ -103,7 +117,57 @@ namespace TrilhaApiDesafio.Controllers
                 return NotFound();
 
             // TODO: Remover a tarefa encontrada através do EF e salvar as mudanças (save changes)
-            return NoContent();
+            _context.Tarefas.Remove(tarefaBanco);
+            _context.SaveChanges();
+
+            return NoContent(); // nada para retornar
         }
+
+// ----------------------------------------------------------------------------------------------------------
+
+        //  [HttpDelete("DeletarPorTitulo")]
+        // public IActionResult DeletarPorTitulo(string titulo)
+        // {
+        //     var tarefaBanco = _context.Tarefas.Where(x => x.Titulo == titulo ).ToList();
+
+        //     if (!tarefaBanco.Any())
+        //         return NotFound();
+
+        //     // Remover a tarefa encontrada através do EF e salvar as mudanças (save changes)
+        //     _context.Tarefas.RemoveRange(tarefaBanco);
+        //     _context.SaveChanges();
+
+        //     return NoContent(); // nada para retornar
+        // }
+
+
+
+        // [HttpPut("AtualizarPorTitulo")]
+        // public async Task<IActionResult> AtualizarPorTitulo(string titulo, [FromBody] Tarefa tarefa)
+        // {
+        //     var tarefaBanco = await _context.Tarefas.FirstOrDefaultAsync(x => x.Titulo == titulo);
+
+        //     if (tarefaBanco == null)
+        //         return NotFound();
+
+        //     if (tarefa.Data == DateTime.MinValue)
+        //         return BadRequest(new { Erro = "A data da tarefa não pode ser vazia" });
+
+        //     // Atualizar as informações da variável tarefaBanco com a tarefa recebida via parâmetro
+        //     if (tarefa.Titulo != "string")            
+        //         tarefaBanco.Titulo = tarefa.Titulo;
+        //     if (tarefa.Descricao != "string") 
+        //         tarefaBanco.Descricao = tarefa.Descricao;
+        //     tarefaBanco.Data = tarefa.Data;
+        //     tarefaBanco.Status = tarefa.Status;
+
+        //     // Atualizar a variável tarefaBanco no EF e salvar as mudanças (save changes)
+        //     _context.Tarefas.Update(tarefaBanco);
+        //     _context.SaveChanges();
+
+
+        //     return Ok();
+        // }
+
     }
 }
